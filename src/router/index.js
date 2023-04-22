@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import login from '../components/login.vue'
 import home from '../components/home.vue'
+import welcome from '../components/welcome.vue'
+import user  from '../components/user/users.vue'
 
 
 const router = createRouter({
@@ -10,7 +12,11 @@ const router = createRouter({
 
     {path:'/login',component :login},
     {path:'/',component:login},
-    {path:'/home',component:home}
+    {path:'/home',component:home ,redirect:'/welcome',children:[
+
+      {path:'/welcome',component:welcome},
+      {path:'/users',component:user}
+    ]}
 
   ]
 })

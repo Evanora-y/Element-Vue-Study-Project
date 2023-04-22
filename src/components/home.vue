@@ -11,17 +11,17 @@
                 <!-- 侧边栏 -->
 
 
-                <el-menu background-color="#333744" text-color="#fff" :unique-opened="true">
-                    <el-sub-menu :index="item.id +''" v-for="item in menuList" :key="item.id">
+                <el-menu background-color="#333744" text-color="#fff" :unique-opened="true" :router="true">
+                    <el-sub-menu :index="'/'+item.path" v-for="item in menuList" :key="item.id" >
                         <template #title>
-                            <el-icon>
+                            <!-- <el-icon>
                                 <location />
-                            </el-icon>
+                            </el-icon> -->
                             <span>{{ item.authName}}</span>
                         </template>
 
-                        <el-menu-item :index="itemchr.id +''" v-for="itemchr in item.children" :key="itemchr.id" >
-                            <el-icon><icon-menu /></el-icon>
+                        <el-menu-item :index="'/'+itemchr.path" :default-active="saveActivePathDate" v-for="itemchr in item.children" :key="itemchr.id" @click="saveActivePath(index)" >
+                            <!-- <el-icon><icon-menu /></el-icon> -->
                             <span>{{  itemchr.authName}}</span>
                         </el-menu-item>
 
@@ -33,7 +33,9 @@
 
 
             </el-aside>
-            <el-main>Main</el-main>
+            <el-main>
+                <RouterView />
+            </el-main>
         </el-container>
     </el-container>
 </template>
@@ -55,6 +57,7 @@ export default {
     created() {
 
         this.getmenuList();
+        this.saveActivePathDate = window.sessionStorage.getItem('saveActivePath')
 
     },
 
@@ -70,10 +73,24 @@ export default {
 
             // 获取左侧菜单
             const { data: res } = await this.$axios.get('menus')
-            if (res.meta.status !== 200) return ElMessage({ message: '菜单栏获取失败', type: 'warning', })
+            if (res.meta.status !== 200){
+                ElMessage({ message: '已触发安全检测，请勿伪造安全密钥，非法操作！', type: 'warning', })
+
+                window.sessionStorage.clear()
+                this.$router.push("/");
+
+            }
             this.menuList = res.data
-            ElMessage({ message: '菜单栏获取成功', type: 'success', })
+            // ElMessage({ message: '菜单栏获取成功', type: 'success', })
             // console.log(res);
+
+
+
+        },
+        saveActivePath(input){
+
+            window.sessionStorage.setItem('saveActivePath',input)
+            this.saveActivePathDate = input
 
 
 
@@ -84,7 +101,8 @@ export default {
 
         return {
 
-            menuList: []
+            menuList: [],
+            saveActivePathDate:''
 
         }
     }
