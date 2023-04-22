@@ -26,6 +26,7 @@
                         </el-menu-item>
 
 
+
                     </el-sub-menu>
 
 
@@ -76,6 +77,11 @@ import { ElMessage } from 'element-plus'
 <script>
 
 export default {
+    created(){
+
+        this.getmenuList();
+
+    },
 
     methods: {
 
@@ -84,6 +90,25 @@ export default {
             window.sessionStorage.clear()
             this.$router.push('/login')
             ElMessage({ message: '退出成功', type: 'success', })
+        },
+       async getmenuList(){
+
+            // 获取左侧菜单
+           const {data:res} =  await this.$axios.get('menus')
+           if(res.meta.status !== 200) return 
+           console.log(res);
+
+           
+
+        }
+        
+    },
+    data(){
+
+        return{
+            
+            menuList:[]
+
         }
     }
 
