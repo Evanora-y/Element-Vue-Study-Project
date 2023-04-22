@@ -13,7 +13,7 @@ axios.defaults.baseURL = 'http://106.13.226.61:8888/api/private/v1/'
 // 响应头预处理
 axios.interceptors.request.use(config =>{
 
-    console.log(config);
+    // console.log(config);
     config.headers.Authorization =window.sessionStorage.getItem("token")
     return config
 })

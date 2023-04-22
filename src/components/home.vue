@@ -11,46 +11,21 @@
                 <!-- 侧边栏 -->
 
 
-                <el-menu background-color="#333744" text-color="#fff">
-                    <el-sub-menu index="1">
+                <el-menu background-color="#333744" text-color="#fff" :unique-opened="true">
+                    <el-sub-menu :index="item.id +''" v-for="item in menuList" :key="item.id">
                         <template #title>
                             <el-icon>
                                 <location />
                             </el-icon>
-                            <span>菜单一</span>
+                            <span>{{ item.authName}}</span>
                         </template>
 
-                        <el-menu-item index="1-1">
+                        <el-menu-item :index="itemchr.id +''" v-for="itemchr in item.children" :key="itemchr.id" >
                             <el-icon><icon-menu /></el-icon>
-                            <span>子菜单</span>
+                            <span>{{  itemchr.authName}}</span>
                         </el-menu-item>
 
-
-
                     </el-sub-menu>
-
-
-                    <el-menu-item index="2">
-                        <el-icon><icon-menu /></el-icon>
-                        <span>Navigator Two</span>
-                    </el-menu-item>
-
-
-                    <el-menu-item index="3" disabled>
-                        <el-icon>
-                            <document />
-                        </el-icon>
-                        <span>Navigator Three</span>
-                    </el-menu-item>
-
-
-                    <el-menu-item index="4">
-                        <el-icon>
-                            <setting />
-                        </el-icon>
-                        <span>Navigator Four</span>
-                    </el-menu-item>
-
 
                 </el-menu>
 
@@ -77,7 +52,7 @@ import { ElMessage } from 'element-plus'
 <script>
 
 export default {
-    created(){
+    created() {
 
         this.getmenuList();
 
@@ -91,23 +66,25 @@ export default {
             this.$router.push('/login')
             ElMessage({ message: '退出成功', type: 'success', })
         },
-       async getmenuList(){
+        async getmenuList() {
 
             // 获取左侧菜单
-           const {data:res} =  await this.$axios.get('menus')
-           if(res.meta.status !== 200) return 
-           console.log(res);
+            const { data: res } = await this.$axios.get('menus')
+            if (res.meta.status !== 200) return ElMessage({ message: '菜单栏获取失败', type: 'warning', })
+            this.menuList = res.data
+            ElMessage({ message: '菜单栏获取成功', type: 'success', })
+            // console.log(res);
 
-           
+
 
         }
-        
-    },
-    data(){
 
-        return{
-            
-            menuList:[]
+    },
+    data() {
+
+        return {
+
+            menuList: []
 
         }
     }
@@ -118,6 +95,9 @@ export default {
 
 
 </script>
+
+
+
 
 
 
@@ -138,6 +118,13 @@ export default {
 
 
     background-color: #333744;
+    
+}
+.el-menu{
+
+/* 解决菜单边框有实线的问题 */
+border-right: none;
+
 }
 
 .el-main {
