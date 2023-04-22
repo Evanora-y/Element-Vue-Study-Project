@@ -79,6 +79,7 @@ export default {
 
             this.$refs.resetLoginFormRef.resetFields()
         },
+        // 登录
         validateLoginForm(){
 
             this.$refs.resetLoginFormRef.validate(async valid =>{
