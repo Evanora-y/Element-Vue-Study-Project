@@ -44,6 +44,17 @@
 
 export default {
 
+
+    // 解决已登录之后进入登录页面的问题
+    created(){
+        
+
+        const checkout =  window.sessionStorage.getItem("token")
+        if(!checkout) return
+        if(checkout) this.$router.push("/home");
+
+    },
+
     data() {
 
         return {
