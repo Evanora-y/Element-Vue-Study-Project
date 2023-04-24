@@ -50,8 +50,9 @@ export default {
         if(checkout !== null){
 
             this.$router.push("/welcome");
-        },
+        }
 
+    },
     data() {
 
         return {
@@ -92,14 +93,13 @@ export default {
 
             this.$refs.resetLoginFormRef.validate(async valid =>{
                 if(!valid) return;
-                if(!valid) return;
                 const {data:res} =await this.$axios.post("login",this.login_from_data);
                 if(res.meta.status != 200){
 
-                    return ElMessage({message: '登录失败',type: 'warning',})
-                    
+                    return this.$message({message: '登录失败',type: 'warning',})
+
                 }
-                ElMessage({message: '登录成功',type: 'success',})
+                this.$message({message: '登录成功',type: 'success',})
                 window.sessionStorage.setItem("token",res.data.token);
                 this.$router.push("/home");
                 
@@ -146,7 +146,7 @@ import { ElMessage } from 'element-plus'
 .img_login_avatar {
 
     height: 100px;
-    border-radius: 50px;
+    border-radius: 50%;
 }
 
 .login_avatar {
