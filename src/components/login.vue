@@ -50,10 +50,7 @@ export default {
         if(checkout !== null){
 
             this.$router.push("/welcome");
-        }
-
-
-    },
+        },
 
     data() {
 
