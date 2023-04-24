@@ -44,16 +44,16 @@
 
 export default {
 
-    // created(){
+    created(){
 
-    //     const checkout = window.sessionStorage.getItem('saveActivePath')
-    //     if(checkout !== null){
+        const checkout = window.sessionStorage.getItem('token')
+        if(checkout !== null){
 
-    //         this.$router.push("/welcome");
-    //     }
+            this.$router.push("/welcome");
+        }
 
 
-    // },
+    },
 
     data() {
 
