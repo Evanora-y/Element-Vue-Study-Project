@@ -77,7 +77,7 @@ export default {
                 ElMessage({ message: '已触发安全检测，请勿伪造安全密钥，非法操作！', type: 'warning', })
 
                 window.sessionStorage.clear()
-                this.$router.push("/");
+                this.$router.push("/login");
 
             }
             this.menuList = res.data

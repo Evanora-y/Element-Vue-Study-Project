@@ -44,6 +44,17 @@
 
 export default {
 
+    // created(){
+
+    //     const checkout = window.sessionStorage.getItem('saveActivePath')
+    //     if(checkout !== null){
+
+    //         this.$router.push("/welcome");
+    //     }
+
+
+    // },
+
     data() {
 
         return {
