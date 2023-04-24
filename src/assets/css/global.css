@@ -6,7 +6,7 @@ html,body,#app,.login_container{
 
 }
 .box-card {
-    width: 100%;
+    width: 100% !important;
 }
 .el-card{
 
