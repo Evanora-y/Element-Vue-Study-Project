@@ -12,45 +12,29 @@
     <el-card class="box-card">
 
 
-        <el-table :data="userlist" stripe style="width: 100%" border>
+        <el-table :data="rightslist" stripe style="width: 100%" border>
             <el-table-column type="index" label="#" width="70" />
-            <el-table-column prop="username" label="姓名" width="180" />
-            <el-table-column prop="email" label="邮箱" width="200" />
-            <el-table-column prop="mobile" label="电话" width="200" />
-            <el-table-column prop="role_name" label="角色" width="180" />
-            <el-table-column label="状态" width="150">
-                <template v-slot="scope">
-                    <el-switch v-model="scope.row.mg_state" @change="userStateChangesd(scope.row)" />
-                    <!-- {{scope.row}} -->
+            <el-table-column prop="authName" label="权限名称" />
+            <el-table-column prop="path" label="路径" />
+            <el-table-column label="权限等级">
 
-                </template>
-            </el-table-column>
-            <el-table-column label="操作">
 
-                <template v-slot="scope">
+                <template v-slot="level">
 
-                    <el-tooltip class="box-item" effect="dark" content="修改用户" placement="top" :enterable="false">
-                        <el-button type="primary" :icon="Edit"
-                            @click="dialogVisible_changeUser = true, changeFormDataId = scope.row.id" />
-                    </el-tooltip>
+                    <!-- {{ level.row.level}} -->
 
-                    <!-- 删除 -->
-                    <el-tooltip class="box-item" effect="dark" content="删除用户" placement="top" :enterable="false">
-                        <el-button type="danger" :icon="Delete" @click="deleteUser(scope.row.id)" />
-                    </el-tooltip>
-
-                    <!-- 分配角色 -->
-
-                    <el-tooltip class="box-item" effect="dark" content="分配角色" placement="top" :enterable="false">
-                        <el-button type="warning" :icon="Setting" />
-                    </el-tooltip>
+                    <el-tag v-if="level.row.level === '2'" type="info">三级权限</el-tag>
+                    <el-tag v-if="level.row.level === '1'" type="warning">二级权限</el-tag>
+                    <el-tag v-if="level.row.level === '0'" type="danger">一级权限</el-tag>
 
 
                 </template>
-                <!-- 修改 -->
-
 
             </el-table-column>
+
+
+
+
         </el-table>
 
 
@@ -60,12 +44,59 @@
     </el-card>
 </template>
 
+<script>
+
+export default {
+
+    created() {
+
+        this.getRightsList()
+    },
+
+    data() {
+
+
+        return {
+
+            rightslist: []
+
+        }
+    },
+
+    methods: {
+
+
+        async getRightsList() {
+
+
+            const { data: res } = await this.$axios.get('rights/list')
+            if (res.meta.status !== 200) {
+                ElMessage({ message: '获取列表失败，已强制退出！', type: 'warning', })
+
+                window.sessionStorage.clear()
+                this.$router.push("/login");
+                return
+
+            }
+
+            console.log(res);
+            this.rightslist = res.data
+
+
+        }
+    }
+}
+
+
+
+</script>
+
 
 <script setup >
 
 
 import { ElMessage } from 'element-plus'
-import { Delete, Edit, Search, Setting } from '@element-plus/icons-vue'
+// import { Delete, Edit, Search, Setting } from '@element-plus/icons-vue'
 
 </script>
 
