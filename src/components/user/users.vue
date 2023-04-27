@@ -57,7 +57,8 @@
                 <template v-slot="scope">
 
                     <el-tooltip class="box-item" effect="dark" content="修改用户" placement="top" :enterable="false">
-                        <el-button type="primary" :icon="Edit" @click="dialogVisible_changeUser =true,changeFormDataId = scope.row.id" />
+                        <el-button type="primary" :icon="Edit"
+                            @click="dialogVisible_changeUser = true, changeFormDataId = scope.row.id" />
                     </el-tooltip>
 
                     <!-- 删除 -->
@@ -84,7 +85,7 @@
         <div class="demo-pagination-block">
 
             <el-pagination v-model:current-page="QueryInfo.pagenum" v-model:page-size="QueryInfo.pagesize"
-                :page-sizes="[1, 2, 5, 10]" :small="small" :disabled="disabled" :background="background"
+                :page-sizes="[4, 8, 16, 32]" :small="small" :disabled="disabled" :background="background"
                 layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
                 @current-change="handleCurrentChange" />
         </div>
@@ -95,7 +96,7 @@
 
 
     <!-- 弹出层-添加用户 -->
-    <el-dialog v-model="dialogVisible_addUser" width="30%" title="添加用户">
+    <el-dialog v-model="dialogVisible_addUser" width="30%" title="添加用户" @close="clearDialofForm_add()">
 
 
         <el-form ref="addFormDataRef" :model="addFormData" :rules="addFormData_loginRules" label-width="70px">
@@ -121,7 +122,7 @@
             <span class="dialog-footer">
                 <el-button @click="dialogVisible_addUser = false">取消</el-button>
                 <!-- 触发提交 -->
-                <el-button type="primary" @click="dialogVisible_addUser = false, PutAddUserDate()">
+                <el-button type="primary" @click="addUserPreChaeck()">
                     提交
                 </el-button>
             </span>
@@ -134,7 +135,7 @@
 
     <!-- 弹出层-修改用户
     -->
-    <el-dialog v-model="dialogVisible_changeUser" width="30%" title="修改用户">
+    <el-dialog v-model="dialogVisible_changeUser" width="30%" title="修改用户" @close="clearDialofForm_change()">
 
 
         <el-form ref="changeFormDataRef" :model="changeFormData" :rules="changeFormData_loginRules" label-width="70px">
@@ -252,9 +253,9 @@ export default {
             for (let index = 0; index < this.addFormData.length; index++) {
                 this.addFormData[index] = ''
                 // console.log();
-                
+
             }
-            
+
             this.getUserList()
         },
 
@@ -280,7 +281,7 @@ export default {
 
         async changeUser() {
 
-            const { data: res } = await this.$axios.put(`users/${this.changeFormDataId}`,this.changeFormData)
+            const { data: res } = await this.$axios.put(`users/${this.changeFormDataId}`, this.changeFormData)
 
             if (res.meta.status !== 200) {
                 ElMessage({ message: '修改用户失败！', type: 'warning', })
@@ -293,7 +294,41 @@ export default {
             this.getUserList()
 
 
+        },
+
+        // 弹出层关闭之后清空表单
+        clearDialofForm_add() {
+
+            this.$refs.addFormDataRef.resetFields()
+            // this.$refs.changeFormDataRef.resetFields()
+        },
+        clearDialofForm_change() {
+
+            // this.$refs.addFormDataRef.resetFields()
+            this.$refs.changeFormDataRef.resetFields()
+        },
+
+        // 添加用户预校验
+        addUserPreChaeck() {
+
+            this.$refs.addFormDataRef.validate(valid => {
+                
+
+                // console.log(valid);
+                if (valid) {
+
+
+                    this.dialogVisible_addUser = false
+
+                    // 发起请求
+                    this.PutAddUserDate()
+
+                }
+
+            })
+
         }
+
 
 
     },
@@ -309,13 +344,13 @@ export default {
 
                 query: '',
                 pagenum: 1,
-                pagesize: 2
+                pagesize: 4
 
             },
             userlist: [],
             total: 2,
             dialogVisible_addUser: false,
-            dialogVisible_changeUser:false,
+            dialogVisible_changeUser: false,
             addFormData: {
                 username: '',
                 password: '',
@@ -325,27 +360,34 @@ export default {
 
 
             },
-            changeFormData:{
+            changeFormData: {
                 email: '',
                 mobile: ''
 
 
             },
-            changeFormDataId:0,
-            changeFormData_loginRules:{
+            changeFormDataId: 0,
+            changeFormData_loginRules: {
 
                 email: [
-
                     { required: false, message: '请输入邮箱', trigger: 'blur' },
-                    { min: 3, max: 10, message: '长度在3到10之间', trigger: 'blur' },
-
+                    { type: 'email', message: '请输入正确的邮箱格式', trigger: ['blur', 'change'] },
+                    // 自定义校验规则
+                    {
+                        validator: (rule, value, callback) => {
+                            if (value === '') {
+                                callback(new Error('邮箱不能为空'));
+                            } else {
+                                callback();
+                            }
+                        },
+                        trigger: ['blur', 'change']
+                    }
                 ],
                 mobile: [
-
                     { required: false, message: '请输入手机号', trigger: 'blur' },
-                    { min: 11, max: 11, message: '长度是11位有效数字', trigger: 'blur' },
-
-                ],
+                    { pattern: /^1\d{10}$/, message: '请输入正确的手机号', trigger: ['blur', 'change'] }
+                ]
 
 
             },
@@ -362,17 +404,24 @@ export default {
 
                 ],
                 email: [
-
                     { required: false, message: '请输入邮箱', trigger: 'blur' },
-                    { min: 3, max: 10, message: '长度在3到10之间', trigger: 'blur' },
-
+                    { type: 'email', message: '请输入正确的邮箱格式', trigger: ['blur', 'change'] },
+                    // 自定义校验规则
+                    {
+                        validator: (rule, value, callback) => {
+                            if (value === '') {
+                                callback(new Error('邮箱不能为空'));
+                            } else {
+                                callback();
+                            }
+                        },
+                        trigger: ['blur', 'change']
+                    }
                 ],
                 mobile: [
-
                     { required: false, message: '请输入手机号', trigger: 'blur' },
-                    { min: 11, max: 11, message: '长度是11位有效数字', trigger: 'blur' },
-
-                ],
+                    { pattern: /^1\d{10}$/, message: '请输入正确的手机号', trigger: ['blur', 'change'] }
+                ]
             }
 
 
