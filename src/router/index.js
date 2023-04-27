@@ -4,6 +4,7 @@ import login from '../components/login.vue'
 import home from '../components/home.vue'
 import welcome from '../components/welcome.vue'
 import user from '../components/user/users.vue'
+import rights from '../components/rights/rights.vue'
 
 
 const router = createRouter({
@@ -16,13 +17,16 @@ const router = createRouter({
       path: '/home', component: home, redirect: '/welcome', children: [
 
         { path: '/welcome', component: welcome },
-        { path: '/users', component: user }
+        { path: '/users', component: user },
+        { path: '/rights', component: rights }
       ]
     }
 
   ]
 })
 
+
+// 定义全局的路由导航守卫
 router.beforeEach((to, from, next) => {
 
 
