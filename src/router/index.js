@@ -5,6 +5,7 @@ import home from '../components/home.vue'
 import welcome from '../components/welcome.vue'
 import user from '../components/user/users.vue'
 import rights from '../components/rights/rights.vue'
+import roles from '../components/rights/roles.vue'
 
 
 const router = createRouter({
@@ -18,7 +19,8 @@ const router = createRouter({
 
         { path: '/welcome', component: welcome },
         { path: '/users', component: user },
-        { path: '/rights', component: rights }
+        { path: '/rights', component: rights },
+        { path: '/roles', component: roles }
       ]
     }
 

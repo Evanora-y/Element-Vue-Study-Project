@@ -79,7 +79,7 @@ export default {
 
             }
 
-            console.log(res);
+            // console.log(res);
             this.rightslist = res.data
 
 
