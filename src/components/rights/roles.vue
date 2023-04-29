@@ -104,7 +104,7 @@
 
                     <!-- 分配角色 -->
 
-                    <el-button type="warning" @click="dialogVisible_changeRights = true" :icon="Setting">分配权限</el-button>
+                    <el-button type="warning" @click="changeRighrsPre(scope.row)" :icon="Setting">分配权限</el-button>
 
 
 
@@ -193,20 +193,15 @@
     <!-- --------------------------------- -->
 
     <!-- 弹出层-编辑权限 -->
-    <el-dialog v-model="dialogVisible_changeRights" width="30%" title="编辑权限" @close="clearDialofForm_changeRoles()">
+    <el-dialog v-model="dialogVisible_changeRights" width="30%" title="编辑权限" @close="this.defkeys = []">
 
 
-        <el-form ref="changeRightsDateRef" :model="changeRightsDate" :rules="FormData_addRightsDate" label-width="70px">
-            <el-form-item prop="roleName" label="名称">
-                <el-input v-model="changeRolesDate.roleName" />
-            </el-form-item>
 
-            <el-form-item prop="roleDesc" label="描述">
-                <el-input v-model="changeRolesDate.roleDesc" />
-            </el-form-item>
+        <el-tree :data="rightslisForchange" default-expand-all="true" show-checkbox node-key="id" 
+            :default-checked-keys="defkeys" :props="defaultProps" />
 
 
-        </el-form>
+
 
         <template #footer>
             <span class="dialog-footer">
@@ -246,6 +241,12 @@ export default {
                 roleName: '',
                 roleDesc: ''
             },
+            defkeys:[],
+            defaultProps : {
+                children: 'children',
+                label: 'authName',
+            },
+            rightslisForchange: [],
             dialogVisible_addRoles: false,
             dialogVisible_changeRoles: false,
             dialogVisible_changeRoles_id: 0,
@@ -408,6 +409,48 @@ export default {
 
 
 
+        },
+
+        // 编辑权限预处理
+        async changeRighrsPre(role) {
+
+            
+            
+
+            const { data: res } = await this.$axios.get(`rights/tree`)
+            if (res.meta.status !== 200) {
+                ElMessage({ message: '所有权限列表请求失败', type: 'warning', })
+
+                return
+
+            }
+            this.rightslisForchange = res.data
+
+            this.getIdFrom(role,this.defkeys)
+
+            this.dialogVisible_changeRights = true
+
+
+        },
+
+        // 拿到已经选择的节点ID
+        // 递归的方式拿到数据
+        getIdFrom(node,addr){
+
+            if(!node.children){
+
+                return addr.push(node.id)
+
+            }
+
+            node.children.forEach(element => 
+            
+            this.getIdFrom(element,addr)
+            
+            );
+
+
+            
         }
 
 
