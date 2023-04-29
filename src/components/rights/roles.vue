@@ -31,7 +31,8 @@
                         <!-- 第一级 -->
                         <el-col :span="3">
 
-                            <el-tag closable @close="deleteRightsForRoles(scope.row.id, item1.id)">{{ item1.authName
+                            <el-tag closable @close="deleteRightsForRoles(scope.row.id, item1.id, scope.row)">{{
+                                item1.authName
                             }}</el-tag>
                             <el-icon>
                                 <CaretRight />
@@ -53,8 +54,9 @@
                                 <!-- 第二级子一级 -->
                                 <el-col :span="3">
 
-                                    <el-tag closable type="success" @close="deleteRightsForRoles(scope.row.id, item2.id)">{{
-                                        item2.authName }}</el-tag>
+                                    <el-tag closable type="success"
+                                        @close="deleteRightsForRoles(scope.row.id, item2.id, scope.row)">{{
+                                            item2.authName }}</el-tag>
                                     <el-icon>
                                         <CaretRight />
                                     </el-icon>
@@ -69,8 +71,9 @@
 
                                     <!-- {{ scope.row.id}}
                                     {{ item3.id}} -->
-                                    <el-tag closable type="warning" @close="deleteRightsForRoles(scope.row.id, item3.id)">{{
-                                        item3.authName }}</el-tag>
+                                    <el-tag closable type="warning"
+                                        @close="deleteRightsForRoles(scope.row.id, item3.id, scope.row)">{{
+                                            item3.authName }}</el-tag>
 
 
 
@@ -101,7 +104,7 @@
 
                     <!-- 分配角色 -->
 
-                    <el-button type="warning" :icon="Setting">分配权限</el-button>
+                    <el-button type="warning" @click="changeRighrsPre(scope.row)" :icon="Setting">分配权限</el-button>
 
 
 
@@ -185,6 +188,31 @@
             </span>
         </template>
     </el-dialog>
+
+
+    <!-- --------------------------------- -->
+
+    <!-- 弹出层-编辑权限 -->
+    <el-dialog v-model="dialogVisible_changeRights" width="30%" title="编辑权限" @close="this.defkeys = []">
+
+
+
+        <el-tree :data="rightslisForchange" default-expand-all="true" show-checkbox node-key="id" 
+            :default-checked-keys="defkeys" :props="defaultProps" />
+
+
+
+
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="dialogVisible_changeRights = false">取消</el-button>
+                <!-- 触发提交 -->
+                <el-button type="primary" @click="changeRightesDatePreChaeck()">
+                    提交
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script>
@@ -213,9 +241,16 @@ export default {
                 roleName: '',
                 roleDesc: ''
             },
+            defkeys:[],
+            defaultProps : {
+                children: 'children',
+                label: 'authName',
+            },
+            rightslisForchange: [],
             dialogVisible_addRoles: false,
             dialogVisible_changeRoles: false,
             dialogVisible_changeRoles_id: 0,
+            dialogVisible_changeRights: false,
             addFormData_addRolesDate: {
 
 
@@ -322,7 +357,7 @@ export default {
         },
 
         // 删除角色指定权限
-        async deleteRightsForRoles(roleId, rightId) {
+        async deleteRightsForRoles(roleId, rightId, resf) {
 
             const { data: res } = await this.$axios.delete(`roles/${roleId}/rights/${rightId}`)
             if (res.meta.status !== 200) {
@@ -331,7 +366,8 @@ export default {
                 return
 
             }
-            this.getRightsList()
+            // this.getRightsList()
+            resf.children = res.data
 
         },
 
@@ -373,6 +409,48 @@ export default {
 
 
 
+        },
+
+        // 编辑权限预处理
+        async changeRighrsPre(role) {
+
+            
+            
+
+            const { data: res } = await this.$axios.get(`rights/tree`)
+            if (res.meta.status !== 200) {
+                ElMessage({ message: '所有权限列表请求失败', type: 'warning', })
+
+                return
+
+            }
+            this.rightslisForchange = res.data
+
+            this.getIdFrom(role,this.defkeys)
+
+            this.dialogVisible_changeRights = true
+
+
+        },
+
+        // 拿到已经选择的节点ID
+        // 递归的方式拿到数据
+        getIdFrom(node,addr){
+
+            if(!node.children){
+
+                return addr.push(node.id)
+
+            }
+
+            node.children.forEach(element => 
+            
+            this.getIdFrom(element,addr)
+            
+            );
+
+
+            
         }
 
 
