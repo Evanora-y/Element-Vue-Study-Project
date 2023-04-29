@@ -31,7 +31,8 @@
                         <!-- 第一级 -->
                         <el-col :span="3">
 
-                            <el-tag closable @close="deleteRightsForRoles(scope.row.id, item1.id,scope.row)">{{ item1.authName
+                            <el-tag closable @close="deleteRightsForRoles(scope.row.id, item1.id, scope.row)">{{
+                                item1.authName
                             }}</el-tag>
                             <el-icon>
                                 <CaretRight />
@@ -53,8 +54,9 @@
                                 <!-- 第二级子一级 -->
                                 <el-col :span="3">
 
-                                    <el-tag closable type="success" @close="deleteRightsForRoles(scope.row.id, item2.id,scope.row)">{{
-                                        item2.authName }}</el-tag>
+                                    <el-tag closable type="success"
+                                        @close="deleteRightsForRoles(scope.row.id, item2.id, scope.row)">{{
+                                            item2.authName }}</el-tag>
                                     <el-icon>
                                         <CaretRight />
                                     </el-icon>
@@ -69,8 +71,9 @@
 
                                     <!-- {{ scope.row.id}}
                                     {{ item3.id}} -->
-                                    <el-tag closable type="warning" @close="deleteRightsForRoles(scope.row.id, item3.id,scope.row)">{{
-                                        item3.authName }}</el-tag>
+                                    <el-tag closable type="warning"
+                                        @close="deleteRightsForRoles(scope.row.id, item3.id, scope.row)">{{
+                                            item3.authName }}</el-tag>
 
 
 
@@ -101,7 +104,7 @@
 
                     <!-- 分配角色 -->
 
-                    <el-button type="warning" @click="dialogVisible_changeRights =true" :icon="Setting">分配权限</el-button>
+                    <el-button type="warning" @click="dialogVisible_changeRights = true" :icon="Setting">分配权限</el-button>
 
 
 
@@ -187,35 +190,34 @@
     </el-dialog>
 
 
-        <!-- --------------------------------- -->
+    <!-- --------------------------------- -->
 
-            <!-- 弹出层-编辑权限 -->
+    <!-- 弹出层-编辑权限 -->
     <el-dialog v-model="dialogVisible_changeRights" width="30%" title="编辑权限" @close="clearDialofForm_changeRoles()">
 
 
-<el-form ref="changeRightsDateRef" :model="changeRightsDate" :rules="FormData_addRightsDate" label-width="70px">
-    <el-form-item prop="roleName" label="名称">
-        <el-input v-model="changeRolesDate.roleName" />
-    </el-form-item>
+        <el-form ref="changeRightsDateRef" :model="changeRightsDate" :rules="FormData_addRightsDate" label-width="70px">
+            <el-form-item prop="roleName" label="名称">
+                <el-input v-model="changeRolesDate.roleName" />
+            </el-form-item>
 
-    <el-form-item prop="roleDesc" label="描述">
-        <el-input v-model="changeRolesDate.roleDesc" />
-    </el-form-item>
+            <el-form-item prop="roleDesc" label="描述">
+                <el-input v-model="changeRolesDate.roleDesc" />
+            </el-form-item>
 
 
-</el-form>
+        </el-form>
 
-<template #footer>
-    <span class="dialog-footer">
-        <el-button @click="dialogVisible_changeRights = false">取消</el-button>
-        <!-- 触发提交 -->
-        <el-button type="primary" @click="changeRightesDatePreChaeck()">
-            提交
-        </el-button>
-    </span>
-</template>
-</el-dialog>
-
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="dialogVisible_changeRights = false">取消</el-button>
+                <!-- 触发提交 -->
+                <el-button type="primary" @click="changeRightesDatePreChaeck()">
+                    提交
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script>
@@ -247,7 +249,7 @@ export default {
             dialogVisible_addRoles: false,
             dialogVisible_changeRoles: false,
             dialogVisible_changeRoles_id: 0,
-            dialogVisible_changeRights:false,
+            dialogVisible_changeRights: false,
             addFormData_addRolesDate: {
 
 
@@ -354,7 +356,7 @@ export default {
         },
 
         // 删除角色指定权限
-        async deleteRightsForRoles(roleId, rightId,resf) {
+        async deleteRightsForRoles(roleId, rightId, resf) {
 
             const { data: res } = await this.$axios.delete(`roles/${roleId}/rights/${rightId}`)
             if (res.meta.status !== 200) {
