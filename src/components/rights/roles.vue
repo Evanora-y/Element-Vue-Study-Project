@@ -197,8 +197,8 @@
 
 
 
-        <el-tree :data="rightslisForchange" default-expand-all="true" show-checkbox node-key="id" 
-            :default-checked-keys="defkeys" :props="defaultProps" />
+        <el-tree :data="rightslisForchange" default-expand-all="true" show-checkbox node-key="id"
+            :default-checked-keys="defkeys" :props="defaultProps" ref="treeshowref" />
 
 
 
@@ -241,8 +241,9 @@ export default {
                 roleName: '',
                 roleDesc: ''
             },
-            defkeys:[],
-            defaultProps : {
+            changeRighrsId:'',
+            defkeys: [],
+            defaultProps: {
                 children: 'children',
                 label: 'authName',
             },
@@ -414,8 +415,8 @@ export default {
         // 编辑权限预处理
         async changeRighrsPre(role) {
 
-            
-            
+
+
 
             const { data: res } = await this.$axios.get(`rights/tree`)
             if (res.meta.status !== 200) {
@@ -426,31 +427,60 @@ export default {
             }
             this.rightslisForchange = res.data
 
-            this.getIdFrom(role,this.defkeys)
+            this.getIdFrom(role, this.defkeys)
 
             this.dialogVisible_changeRights = true
+
+            this.changeRighrsId = role.id
 
 
         },
 
         // 拿到已经选择的节点ID
         // 递归的方式拿到数据
-        getIdFrom(node,addr){
+        getIdFrom(node, addr) {
 
-            if(!node.children){
+            if (!node.children) {
 
                 return addr.push(node.id)
 
             }
 
-            node.children.forEach(element => 
-            
-            this.getIdFrom(element,addr)
-            
+            node.children.forEach(element =>
+
+                this.getIdFrom(element, addr)
+
             );
 
 
-            
+
+        },
+        async changeRightesDatePreChaeck() {
+
+            const keys = [
+
+                ...this.$refs.treeshowref.getCheckedKeys(),
+                ...this.$refs.treeshowref.getHalfCheckedKeys()
+            ]
+
+
+            const idStr = keys.join(',')
+
+
+            const { data: res } = await this.$axios.post(`roles/${this.changeRighrsId}/rights`, {rids:idStr})
+            if (res.meta.status !== 200) {
+                ElMessage({ message: '角色授权失败', type: 'warning', })
+                // console.log(res);
+
+                return
+
+            }
+
+            this.dialogVisible_changeRights = false
+            this.getRightsList()
+
+
+
         }
 
 
