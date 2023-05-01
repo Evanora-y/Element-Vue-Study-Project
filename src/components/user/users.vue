@@ -72,7 +72,7 @@
                         <!-- {{scope.row}} -->
                         <el-button type="warning" :icon="Setting" @click="AssigningRolesPre(), AssigningRolesDatePre =
                             {
-                                id:scope.row.id,
+                                id: scope.row.id,
                                 name: scope.row.username,
                                 roles: scope.row.role_name
                             }" />
@@ -380,8 +380,17 @@ export default {
         // 关闭弹出层之后清空数据
         clearDialofForm_AssigningRoles() {
 
-            this.AssigningRolesDatePre = {}
+            this.AssigningRolesDatePre.id = '';
+            this.AssigningRolesDatePre.name = '';
+            this.AssigningRolesDatePre.roles = '';
+
+
+            
             this.Select_options = []
+
+            // this.AssigningRolesDatePre ={}
+
+            // AssigningRolesDatePre
         },
 
         // 分配角色预处理
@@ -414,7 +423,7 @@ export default {
         // 分配角色
         async AssigningRoles(id) {
 
-            const { data: res } = await this.$axios.put(`users/${id}/role`,{rid :this.rolesis})
+            const { data: res } = await this.$axios.put(`users/${id}/role`, { rid: this.rolesis })
 
             if (res.meta.status !== 200) {
                 ElMessage({ message: '分配角色失败！', type: 'warning', })
@@ -426,6 +435,7 @@ export default {
 
 
             this.dialogVisible_AssigningRoles = false
+            this.clearDialofForm_AssigningRoles()
             this.getUserList()
 
 
@@ -456,7 +466,7 @@ export default {
             dialogVisible_changeUser: false,
             dialogVisible_AssigningRoles: false,
             AssigningRolesDatePre: {
-                id:'',
+                id: '',
                 name: '',
                 roles: ''
             },
@@ -539,7 +549,7 @@ export default {
 
             // 分配角色需要确认的id号（角色id）
 
-            rolesis:'',
+            rolesis: '',
 
 
 
