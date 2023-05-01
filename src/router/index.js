@@ -6,6 +6,11 @@ import welcome from '../components/welcome.vue'
 import user from '../components/user/users.vue'
 import rights from '../components/rights/rights.vue'
 import roles from '../components/rights/roles.vue'
+import categories from '../components/goods/categories.vue'
+import goods from '../components/goods/goods.vue'
+import params from '../components/goods/params.vue'
+
+
 
 
 const router = createRouter({
@@ -20,7 +25,10 @@ const router = createRouter({
         { path: '/welcome', component: welcome },
         { path: '/users', component: user },
         { path: '/rights', component: rights },
-        { path: '/roles', component: roles }
+        { path: '/roles', component: roles },
+        { path: '/categories', component: categories },
+        { path: '/goods', component: goods },
+        { path: '/params', component: params }
       ]
     }
 
