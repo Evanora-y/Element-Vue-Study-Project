@@ -69,7 +69,13 @@
                     <!-- 分配角色 -->
 
                     <el-tooltip class="box-item" effect="dark" content="分配角色" placement="top" :enterable="false">
-                        <el-button type="warning" :icon="Setting" />
+                        <!-- {{scope.row}} -->
+                        <el-button type="warning" :icon="Setting" @click="AssigningRolesPre(), AssigningRolesDatePre =
+                            {
+                                id: scope.row.id,
+                                name: scope.row.username,
+                                roles: scope.row.role_name
+                            }" />
                     </el-tooltip>
 
 
@@ -158,6 +164,48 @@
                 <el-button @click="dialogVisible_changeUser = false">取消</el-button>
                 <!-- 触发提交 -->
                 <el-button type="primary" @click="dialogVisible_changeUser = false, changeUser()">
+                    更新
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
+
+
+
+    <!-- ----------------------------------------- -->
+
+
+    <!-- 弹出层-分配角色
+    -->
+    <el-dialog v-model="dialogVisible_AssigningRoles" width="30%" title="分配角色" @close="clearDialofForm_AssigningRoles()">
+
+
+        <el-form ref="AssigningRolesRef" :model="changeFormData" :rules="changeFormData_loginRules" label-width="70px">
+
+
+            <!-- {{AssigningRolesDatePre}} -->
+
+            当前的名称：
+            {{ AssigningRolesDatePre.name }}
+            <br><br>
+            当前的角色：
+            {{ AssigningRolesDatePre.roles }}
+
+            <br><br>
+
+            变更为：
+            <el-select v-model="rolesis" :placeholder="AssigningRolesDatePre.roles" size="large">
+                <el-option v-for="item in Select_options" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+
+
+        </el-form>
+
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="dialogVisible_AssigningRoles = false">取消</el-button>
+                <!-- 触发提交 -->
+                <el-button type="primary" @click="AssigningRoles(AssigningRolesDatePre.id)">
                     更新
                 </el-button>
             </span>
@@ -312,7 +360,7 @@ export default {
         addUserPreChaeck() {
 
             this.$refs.addFormDataRef.validate(valid => {
-                
+
 
                 // console.log(valid);
                 if (valid) {
@@ -327,7 +375,72 @@ export default {
 
             })
 
-        }
+        },
+
+        // 关闭弹出层之后清空数据
+        clearDialofForm_AssigningRoles() {
+
+            this.AssigningRolesDatePre.id = '';
+            this.AssigningRolesDatePre.name = '';
+            this.AssigningRolesDatePre.roles = '';
+
+
+            
+            this.Select_options = []
+
+            // this.AssigningRolesDatePre ={}
+
+            // AssigningRolesDatePre
+        },
+
+        // 分配角色预处理
+        async AssigningRolesPre() {
+
+            const { data: res } = await this.$axios.get(`roles`)
+
+            if (res.meta.status !== 200) {
+                ElMessage({ message: '角色列表获取失败！', type: 'warning', })
+
+
+                return
+
+            }
+
+            for (var i = 0; i < res.data.length; i++) {
+
+                this.Select_options.push({
+                    value: res.data[i].id,
+                    label: res.data[i].roleName
+                })
+
+            }
+
+            this.dialogVisible_AssigningRoles = true
+
+
+        },
+
+        // 分配角色
+        async AssigningRoles(id) {
+
+            const { data: res } = await this.$axios.put(`users/${id}/role`, { rid: this.rolesis })
+
+            if (res.meta.status !== 200) {
+                ElMessage({ message: '分配角色失败！', type: 'warning', })
+
+
+                return
+
+            }
+
+
+            this.dialogVisible_AssigningRoles = false
+            this.clearDialofForm_AssigningRoles()
+            this.getUserList()
+
+
+        },
+
 
 
 
@@ -351,6 +464,12 @@ export default {
             total: 2,
             dialogVisible_addUser: false,
             dialogVisible_changeUser: false,
+            dialogVisible_AssigningRoles: false,
+            AssigningRolesDatePre: {
+                id: '',
+                name: '',
+                roles: ''
+            },
             addFormData: {
                 username: '',
                 password: '',
@@ -422,7 +541,15 @@ export default {
                     { required: false, message: '请输入手机号', trigger: 'blur' },
                     { pattern: /^1\d{10}$/, message: '请输入正确的手机号', trigger: ['blur', 'change'] }
                 ]
-            }
+            },
+
+
+            // 分配角色的下拉选单的预加载数据
+            Select_options: [],
+
+            // 分配角色需要确认的id号（角色id）
+
+            rolesis: '',
 
 
 
