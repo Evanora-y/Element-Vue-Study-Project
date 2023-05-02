@@ -24,13 +24,16 @@
 
         <!-- 选项卡 -->
         <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-            <el-tab-pane label="动态属性" name="first">
 
-                <el-button class="addroles" @click="dialogVisible_AddClassification = true" type="primary">添加参数</el-button>
-                <el-table :data="categoriesServerDate" stripe style="width: 100%" row-key="cat_id" border>
+            <!-- 动态属性 -->
+            <el-tab-pane label="动态属性" name="many" :disabled="isdisabled">
 
-                    <el-table-column prop="cat_id" label="#" width="120" />
-                    <el-table-column prop="cat_name" label="参数名称" />
+                <el-button class="addroles" @click="dialogVisible_AddClassification = true" type="primary"
+                    :disabled="isdisabled">添加动态属性</el-button>
+                <el-table :data="getCategoriesListDate" stripe style="width: 100%" row-key="cat_id" border>
+
+                    <el-table-column prop="attr_id" label="#" width="120" />
+                    <el-table-column prop="attr_name" label="参数名称" />
 
 
                     <el-table-column label="操作">
@@ -39,11 +42,12 @@
                             <!-- {{scope.row.cat_id }} -->
 
                             <el-button type="primary" :icon="Edit"
-                                @click="dialogVisible_changeClassification = true, changecat_id = scope.row.cat_id">编辑</el-button>
+                                @click="dialogVisible_changeClassification = true, changecat_id = scope.row.cat_id"
+                                :disabled="isdisabled">编辑</el-button>
 
                             <!-- 删除 -->
-                            <el-button type="danger" :icon="Delete"
-                                @click="deleteClassificationDate(scope.row.cat_id)">删除</el-button>
+                            <el-button type="danger" :icon="Delete" @click="deleteClassificationDate(scope.row.cat_id)"
+                                :disabled="isdisabled">删除</el-button>
 
 
 
@@ -62,10 +66,48 @@
                 </el-table>
 
             </el-tab-pane>
-            <el-tab-pane label="静态属性" name="second">
+
+
+            <!-- 静态属性 -->
+            <el-tab-pane label="静态属性" name="only" :disabled="isdisabled">
+
+                <el-button class="addroles" @click="dialogVisible_AddClassification = true" type="primary"
+                    :disabled="isdisabled">添加静态属性</el-button>
+
+                <el-table :data="getCategoriesListDate" stripe style="width: 100%" row-key="cat_id" border>
+
+                    <el-table-column prop="attr_id" label="#" width="120" />
+                    <el-table-column prop="attr_name" label="参数名称" />
+
+
+                    <el-table-column label="操作">
+
+                        <template v-slot="scope">
+                            <!-- {{scope.row.cat_id }} -->
+
+                            <el-button type="primary" :icon="Edit"
+                                @click="dialogVisible_changeClassification = true, changecat_id = scope.row.cat_id"
+                                :disabled="isdisabled">编辑</el-button>
+
+                            <!-- 删除 -->
+                            <el-button type="danger" :icon="Delete" @click="deleteClassificationDate(scope.row.cat_id)"
+                                :disabled="isdisabled">删除</el-button>
 
 
 
+
+
+
+
+                        </template>
+
+
+                    </el-table-column>
+
+
+
+
+                </el-table>
 
             </el-tab-pane>
 
@@ -159,6 +201,9 @@ export default {
         this.categories()
 
 
+
+
+
     },
 
     data() {
@@ -169,7 +214,13 @@ export default {
 
 
             categoriesServerDate: [],
-            props: {},
+            value: [],
+            props: {
+                // expandTrigger: 'hover',
+                value: 'cat_id',
+                label: 'cat_name',
+                children: 'children',
+            },
             dialogVisible_AddClassification: false,
             dialogVisible_changeClassification: false,
             AddClassificationDate: {
@@ -184,7 +235,12 @@ export default {
                 Name: ''
             },
             changecat_id: '',
+            activeName: 'many',
 
+            // 禁用选项卡
+            isdisabled: true,
+
+            getCategoriesListDate: [],
 
         }
 
@@ -203,9 +259,9 @@ export default {
 
             }
 
-            this.categoriesServerDate = res.data.result
+            this.categoriesServerDate = res.data
             // this.total = res.data.total
-            console.log(res.data);
+            // console.log(res.data);
 
         },
         async AddClassificationDatePreChaeck() {
@@ -264,6 +320,56 @@ export default {
 
 
 
+        },
+        handleChange(value) {
+
+            if (this.value.length !== 3) {
+                this.value = []
+
+                return
+            }
+            // console.log(value);
+            this.getCategoriesList()
+            this.isdisabled = false
+        },
+
+
+        async getCategoriesList() {
+
+
+            const { data: res } = await this.$axios.get(`categories/${this.value[2]}/attributes`, { params: { sel: this.activeName } })
+            if (res.meta.status !== 200) {
+                ElMessage({ message: '参数列表获取失败', type: 'warning', })
+                return
+
+            }
+
+
+
+            this.getCategoriesListDate = res.data
+
+            console.log(res.data);
+
+        },
+
+        // 选项卡的变动后发起新的请求
+        handleClick(){
+
+            // 修复了选项卡的反向错误
+            if(this.activeName ==='many'){
+                console.log(123);
+
+                this.activeName ='only'
+            }else{
+
+                this.activeName ='many'
+
+            }
+            
+            // console.log(this.activeName);
+            this.getCategoriesList()
+
+
         }
 
 
@@ -308,9 +414,11 @@ import { ElMessage } from 'element-plus'
     margin-bottom: 20px;
 
 
+
+
 }
 
-.mar{
+.mar {
 
     margin: 40px;
 }
