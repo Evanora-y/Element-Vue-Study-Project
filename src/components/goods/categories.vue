@@ -42,9 +42,9 @@
             <el-table-column label="操作">
 
                 <template v-slot="scope">
-                    <!-- {{scope.row }} -->
+                    <!-- {{scope.row.cat_id }} -->
 
-                    <el-button type="primary" :icon="Edit">编辑</el-button>
+                    <el-button type="primary" :icon="Edit" @click="dialogVisible_changeClassification=true,changecat_id =scope.row.cat_id ">编辑</el-button>
 
                     <!-- 删除 -->
                     <el-button type="danger" :icon="Delete"
@@ -111,6 +111,34 @@
             </span>
         </template>
     </el-dialog>
+
+
+
+
+
+    <!-- 弹出层-编辑分类-->
+    <el-dialog v-model="dialogVisible_changeClassification" width="30%" title="编辑分类">
+
+
+        <el-form ref="changeClassificationDateRef" :model="changeClassificationDate" label-width="70px">
+            <el-form-item prop="roleName" label="新名称">
+                <el-input v-model="changeClassificationDate.Name" />
+            </el-form-item>
+
+
+
+        </el-form>
+
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="dialogVisible_changeClassification = false">取消</el-button>
+                <!-- 触发提交 -->
+                <el-button type="primary" @click="changeClassificationDatePreChaeck()">
+                    变更
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script>
@@ -141,13 +169,19 @@ export default {
             categoriesServerDate: [],
             total: '',
             dialogVisible_AddClassification: false,
+            dialogVisible_changeClassification:false,
             AddClassificationDate: {
 
                 cat_pid: '',
                 cat_name: '',
                 cat_level: '',
 
-            }
+            },
+            changeClassificationDate:{
+
+                Name:''
+            },
+            changecat_id:''
 
         }
 
@@ -165,7 +199,7 @@ export default {
         },
 
 
-        
+
         // 列表修改触发
         handleCurrentChange(input) {
             // console.log(input);
@@ -226,6 +260,25 @@ export default {
             // console.log(res);
 
             this.categories()
+
+        },
+        async changeClassificationDatePreChaeck(){
+
+            this.dialogVisible_changeClassification = false
+
+            const { data: res } = await this.$axios.put(`categories/${this.changecat_id}`,{cat_name :this.changeClassificationDate.Name})
+            if (res.meta.status !== 200) {
+                ElMessage({ message: '变更分类失败', type: 'warning', })
+                // console.log(res);
+                return
+
+            }
+            
+            
+
+            this.categories()
+
+            
 
         }
 
