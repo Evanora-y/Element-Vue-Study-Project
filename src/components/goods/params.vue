@@ -348,7 +348,7 @@ export default {
 
             this.getCategoriesListDate = res.data
 
-            console.log(res.data);
+            // console.log(res.data);
 
         },
 
