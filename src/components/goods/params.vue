@@ -32,6 +32,18 @@
                     :disabled="isdisabled">添加动态属性</el-button>
                 <el-table :data="getCategoriesListDate" stripe style="width: 100%" row-key="cat_id" border>
 
+                    <el-table-column type="expand" label="" width="60px">
+
+                        <template v-slot="scope">
+
+                            <!-- {{this.getCategoriesListDate}} -->
+
+                            <!-- {{ scope.row }} -->
+
+                            <el-tag closable type="warning">{{ scope.row.attr_vals }}</el-tag>
+
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="attr_id" label="#" width="120" />
                     <el-table-column prop="attr_name" label="参数名称" />
 
@@ -78,6 +90,7 @@
 
                     <el-table-column prop="attr_id" label="#" width="120" />
                     <el-table-column prop="attr_name" label="参数名称" />
+                    <el-table-column prop="attr_vals" label="参数内容" />
 
 
                     <el-table-column label="操作">
@@ -348,24 +361,24 @@ export default {
 
             this.getCategoriesListDate = res.data
 
-            // console.log(res.data);
+            console.log(res.data);
 
         },
 
         // 选项卡的变动后发起新的请求
-        handleClick(){
+        handleClick() {
 
             // 修复了选项卡的反向错误
-            if(this.activeName ==='many'){
+            if (this.activeName === 'many') {
                 console.log(123);
 
-                this.activeName ='only'
-            }else{
+                this.activeName = 'only'
+            } else {
 
-                this.activeName ='many'
+                this.activeName = 'many'
 
             }
-            
+
             // console.log(this.activeName);
             this.getCategoriesList()
 
