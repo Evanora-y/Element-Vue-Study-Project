@@ -42,4 +42,6 @@ http://106.13.226.61:8888/api/private/v1/ （自己搭建）
 
 vue_api_server目录下是服务端的源码，数据库是mysql5.5
 
-
+## 运行：
+npm install 
+npm run dev
