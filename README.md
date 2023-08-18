@@ -38,7 +38,7 @@ https://www.bilibili.com/video/BV1x64y1S7S7/?spm_id_from=333.788.top_right_bar_w
 
 
 ## 服务端（全局基准地址）：
-[http://106.13.226.61:8888/api/private/v1/](https://vuedemo.computer-storage.top/api/private/v1/) （自己搭建）
+https://vuedemo.computer-storage.top/api/private/v1/（自己搭建）
 
 vue_api_server目录下是服务端的源码，数据库是mysql5.5
 
